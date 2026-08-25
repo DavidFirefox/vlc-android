@@ -12,6 +12,7 @@ jobs:
 
     container:
       image: registry.videolan.org/vlc-debian-android:20260610055743
+      options: --user root
 
     steps:
       - name: Checkout
