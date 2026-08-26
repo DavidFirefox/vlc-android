@@ -1,0 +1,82 @@
+name: Build VLC Android ARM64
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-vlc-android-arm64:
+    runs-on: ubuntu-24.04
+
+    container:
+      image: registry.videolan.org/vlc-debian-android:20260610055743
+      options: --user root
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git safe directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+      - name: Debug Git
+        run: |
+              pwd
+              git status
+              git rev-parse --show-toplevel
+              git rev-parse --short HEAD
+              git log -1 --oneline
+              git describe --tags --always
+              echo "PWD:"
+              pwd
+              echo "GIT:"
+              git --version
+              echo "STATUS:"
+              git status
+              echo "TOPLEVEL:"
+              git rev-parse --show-toplevel
+              echo "HEAD:"
+              git rev-parse --short HEAD
+              echo "LOG:"
+              git log -1 --oneline
+              echo "DESCRIBE:"
+              git describe --tags --always
+      - name: Build VLC Android ARM64
+        run: |
+              set -x
+              echo "=== ENVIRONMENT ==="
+              id
+              pwd
+              git --version
+
+              echo "=== REPOSITORY ==="
+              git status
+              git rev-parse --show-toplevel
+              git rev-parse HEAD
+              git log -1 --oneline
+
+              echo "=== TAG / DESCRIBE ==="
+              git describe --tags --always --dirty
+
+              echo "=== GIT CONFIG ==="
+              git config --list --show-origin
+
+              echo "=== REMOTE ==="
+              git remote -v
+              git rev-parse --short HEAD
+              ./buildsystem/compile.sh -a arm64 -t
+
+      - name: Upload VLC Android
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-android-arm64
+          path: |
+            libvlcjni/libvlc/jni/libs/arm64-v8a/*
+            .dbg/arm64-v8a/*
