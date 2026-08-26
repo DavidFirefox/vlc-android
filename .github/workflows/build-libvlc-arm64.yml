@@ -19,9 +19,31 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+      - name: Debug Git
+        run: |
+              pwd
+              git status
+              git rev-parse --show-toplevel
+              git rev-parse --short HEAD
+              git log -1 --oneline
+              git describe --tags --always
+              echo "PWD:"
+              pwd
+              echo "GIT:"
+              git --version
+              echo "STATUS:"
+              git status
+              echo "TOPLEVEL:"
+              git rev-parse --show-toplevel
+              echo "HEAD:"
+              git rev-parse --short HEAD
+              echo "LOG:"
+              git log -1 --oneline
+              echo "DESCRIBE:"
+              git describe --tags --always
       - name: Build LibVLC ARM64
         run: |
+          git rev-parse --short HEAD
           ./buildsystem/compile.sh -l -a arm64 -t
 
       - name: Upload LibVLC
