@@ -43,8 +43,28 @@ jobs:
               git describe --tags --always
       - name: Build LibVLC ARM64
         run: |
-          git rev-parse --short HEAD
-          ./buildsystem/compile.sh -l -a arm64 -t
+              set -x
+              echo "=== ENVIRONMENT ==="
+              id
+              pwd
+              git --version
+
+              echo "=== REPOSITORY ==="
+              git status
+              git rev-parse --show-toplevel
+              git rev-parse HEAD
+              git log -1 --oneline
+
+              echo "=== TAG / DESCRIBE ==="
+              git describe --tags --always --dirty
+
+              echo "=== GIT CONFIG ==="
+              git config --list --show-origin
+
+              echo "=== REMOTE ==="
+              git remote -v
+              git rev-parse --short HEAD
+              ./buildsystem/compile.sh -l -a arm64 -t
 
       - name: Upload LibVLC
         uses: actions/upload-artifact@v4
